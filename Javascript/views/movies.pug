@@ -1,0 +1,9 @@
+extends layout
+//- laadt de layout.pug in, en vult de block content in met de doctype
+
+block content
+  h1= title
+  p Welcome to #{title}
+  ul
+    each movie in movies
+      li= movie.title
