@@ -6,7 +6,7 @@ const movieService = require("../services/movieService");
 const GetAllMovies = function(req, res, next) {
     movieService.getMovies((err, movies) => {
         if (err) return next(err); // Fout doorsturen naar de error handler
-        res.json(movies); // Verzend de lijst van films als JSON
+        res.render("movies", { movies });
     });
 };
 
@@ -35,7 +35,7 @@ const GetMovieById = function(req, res, next) {
         if (err) return next(err);
         if (!movie) return res.status(404).json({ error: "Film niet gevonden." });
 
-        res.json(movie);
+        res.render(movie);
     });
 };
 
@@ -48,7 +48,7 @@ const UpdateMovieById = function(req, res, next) {
         if (err) return next(err);
         if (!updatedMovie) return res.status(404).json({ error: "Film niet gevonden." });
 
-        res.json({ message: "Film bijgewerkt", movie: updatedMovie });
+        res.render({ message: "Film bijgewerkt", movie: updatedMovie });
     });
 };
 
@@ -60,7 +60,7 @@ const DeleteMovieById = function(req, res, next) {
         if (err) return next(err);
         if (!deleted) return res.status(404).json({ error: "Film niet gevonden of al verwijderd." });
 
-        res.json({ message: "Film verwijderd" });
+        res.render({ message: "Film verwijderd" });
     });
 };
 
