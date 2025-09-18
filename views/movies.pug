@@ -6,7 +6,7 @@ html(lang="en", class="h-100", data-bs-theme="auto")
     meta(name="description", content="")
     meta(name="author", content="Mark Otto, Jacob Thornton, and Bootstrap contributors")
     meta(name="generator", content="Astro v5.13.2")
-    title ERROR
+    title Sakila Movies
 
     link(rel="canonical", href="https://getbootstrap.com/docs/5.3/examples/cover/")
 
@@ -105,19 +105,9 @@ html(lang="en", class="h-100", data-bs-theme="auto")
       .nav-link:hover {
         color: #ff0000ff !important;
       }
+      
 
   body(class="d-flex h-100 text-center text-bg-dark")
-    svg(xmlns="http://www.w3.org/2000/svg", class="d-none")
-      symbol(id="check2", viewBox="0 0 16 16")
-        path(d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z")
-      symbol(id="circle-half", viewBox="0 0 16 16")
-        path(d="M8 15A7 7 0 1 0 8 1v14zm0 1A8 8 0 1 1 8 0a8 8 0 0 1 0 16z")
-      symbol(id="moon-stars-fill", viewBox="0 0 16 16")
-        path(d="M6 .278a.768.768 0 0 1 .08.858 7.208 7.208 0 0 0-.878 3.46c0 4.021 3.278 7.277 7.318 7.277.527 0 1.04-.055 1.533-.16a.787.787 0 0 1 .81.316.733.733 0 0 1-.031.893A8.349 8.349 0 0 1 8.344 16C3.734 16 0 12.286 0 7.71 0 4.266 2.114 1.312 5.124.06A.752.752 0 0 1 6 .278z")
-        path(d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z")
-      symbol(id="sun-fill", viewBox="0 0 16 16")
-        path(d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z")
-
     div.cover-container.d-flex.w-100.h-100.p-3.mx-auto.flex-column
       header.mb-auto
         div
@@ -127,6 +117,19 @@ html(lang="en", class="h-100", data-bs-theme="auto")
             a.nav-link.fw-bold.py-1.px-0.ms-3(href="/movies") Movies 
             a.nav-link.fw-bold.py-1.px-0.ms-3(href="/login") Log in 
 
+      .container.my-5
+        .row.justify-content-center
+          .col-md-6
+            select#movieLimit.form-select
+              option(value="0") Show all
+              option(value="4") Show 4
+              option(value="8") Show 8
+              option(value="16") Show 16
+              option(value="32") Show 32
+              option(value="64") Show 64
+          .col-md-6
+            input#movieSearch.form-control(type="text", placeholder="Search movies...")
+            
       .container
         .row.row-cols-1.row-cols-sm-2.row-cols-md-3.row-cols-lg-4.g-4
           each movie in movies
@@ -136,16 +139,74 @@ html(lang="en", class="h-100", data-bs-theme="auto")
                 .card-body
                   h5.card-title= movie.title
                 .card-footer.text-center
-                  a.btn.btn-primary(href=`/movies/${movie.film_id}`) View Details
+                  button.btn.btn-primary(type="button", data-bs-toggle="modal", data-bs-target=`#movieModal-${movie.film_id}`)
+                    View Details
 
+              // Modal per film
+              .modal.fade(id=`movieModal-${movie.film_id}`, tabindex="-1")
+                .modal-dialog
+                  .modal-content.text-bg-dark.text-white
+                    .modal-header
+                      h5.modal-title= movie.title
+                      button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
+                    .modal-body.text-start
+                      if movie.release_year
+                        p Released: #{movie.release_year}
+                      if movie.description
+                        p= movie.description
+                      else
+                        p No description available.
+                    .modal-footer
+                      button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
 
       footer.mt-auto.text-white-50
-        p
-          | - Made by Abderabbouh -
+        p - Made by Abderabbouh -
 
-    //- Bootstrap JS bundle
-    script(
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js",
-      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI",
-      crossorigin="anonymous"
-    )
+      //- Bootstrap JS bundle
+      script(
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js",
+        crossorigin="anonymous"
+      )
+
+      //- Custom JS Searchbar
+      script.
+        document.getElementById('movieSearch').addEventListener('input', function() {
+          const query = this.value.toLowerCase();
+          const cards = document.querySelectorAll('.card');
+          cards.forEach(card => {
+            const title = card.querySelector('.card-title').textContent.toLowerCase();
+            if (title.includes(query)) {
+              card.parentElement.style.display = '';
+            } else {
+              card.parentElement.style.display = 'none';
+            }
+          });      
+        });
+
+      //- Custom JS Filter System
+      script.
+        const searchInput = document.getElementById('movieSearch');
+        const limitSelect = document.getElementById('movieLimit');
+        const cards = document.querySelectorAll('.card');
+        const cardCols = Array.from(cards).map(c => c.parentElement);
+        function filterMovies() {
+          const query = searchInput.value.toLowerCase();
+          const limit = parseInt(limitSelect.value, 10);
+          let shown = 0;
+          cardCols.forEach(col => {
+            const title = col.querySelector('.card-title').textContent.toLowerCase();
+            if (title.includes(query)) {
+              if (limit === 0 || shown < limit) {
+                col.style.display = 'block';
+                shown++;
+              } else {
+                col.style.display = 'none';
+              }
+            } else {
+              col.style.display = 'none';
+            }
+          });
+        }
+        searchInput.addEventListener('input', filterMovies);
+        limitSelect.addEventListener('change', filterMovies);
+        filterMovies(); // initieel

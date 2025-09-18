@@ -2,7 +2,7 @@ const pool = require('../config/database'); // Pool voor databaseverbinding
 
 // Haal alle films op (al geïmplementeerd)
 function getAllMovies(callback) {
-    const query = 'SELECT film_id, title, description, release_year FROM film LIMIT 20';
+    const query = 'SELECT film_id, title, description, release_year FROM film LIMIT 10000';
 
     pool.query(query, (error, results) => {
         if (error) {
