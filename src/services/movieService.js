@@ -1,10 +1,6 @@
 // Importeer de nieuwe DAO
 const movieDAO = require('../DAO/movieDAO');
 
-/**
- * De service-laag voor films.
- */
-
 // Haal alle films op
 function getMovies(callback) {
     movieDAO.getAllMovies((err, movies) => {

@@ -1,0 +1,28 @@
+extends layout
+
+block content
+  style.
+    .custom-form-width {
+      max-width: 500px;
+    }
+    .btn.w-100 {
+      max-width: 500px;
+    }
+
+  main.custom-form-width.m-auto
+    form
+      img.mb-4(src="../images/profile-logo.gif", alt="", width="170", height="100")
+      h1.h3.mb-3.fw-normal Register Account
+      
+        .mb-3.my-3
+            input.form-control#floatingEmail(type="email", placeholder="Email address")
+      
+        .mb-3
+            input.form-control.form-control-custom-sm#floatingPassword(type="password", placeholder="Password")
+      
+        .mb-3
+            input.form-control.form-control-custom-sm#floatingPassword(type="password", placeholder="Repeat Password")
+      
+      button.btn.btn-primary.btn-custom-sm.w-100.py-2(type="submit") Register
+      
+      p.mt-5.mb-3.text-body-secondary &copy; 2017–2025

@@ -1,5 +1,5 @@
 var express = require("express");
-var router = express.Router();
+//var router = express.Router();
 const movieService = require("../services/movieService");
 
 // Functie om alle films op te halen
