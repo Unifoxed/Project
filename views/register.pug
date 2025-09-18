@@ -10,18 +10,24 @@ block content
     }
 
   main.custom-form-width.m-auto
-    form
+    form(method="POST", action="/auth/register")
       img.mb-4(src="../images/profile-logo.gif", alt="", width="170", height="100")
       h1.h3.mb-3.fw-normal Register Account
+
+        .mb-3.my-3
+            input.form-control#floatingEmail(type="text", name="first_name" placeholder="First Name")
+
+        .mb-3.my-3
+            input.form-control#floatingEmail(type="text", name="last_name" placeholder="Last Name")
       
         .mb-3.my-3
-            input.form-control#floatingEmail(type="email", placeholder="Email address")
+            input.form-control#floatingEmail(type="email", name="email" placeholder="Email address")
       
         .mb-3
-            input.form-control.form-control-custom-sm#floatingPassword(type="password", placeholder="Password")
+            input.form-control.form-control-custom-sm#floatingPassword(type="password", name="password" placeholder="Password")
       
-        .mb-3
-            input.form-control.form-control-custom-sm#floatingPassword(type="password", placeholder="Repeat Password")
+        //- .mb-3
+        //-     input.form-control.form-control-custom-sm#floatingPassword(type="password", placeholder="Repeat Password")
       
       button.btn.btn-primary.btn-custom-sm.w-100.py-2(type="submit") Register
       

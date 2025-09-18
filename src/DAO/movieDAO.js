@@ -1,5 +1,8 @@
-const pool = require('../config/database'); // Pool voor databaseverbinding
+const pool = require("../config/database");
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
 
+const logger = require("../util/logger");
 // Haal alle films op (al geïmplementeerd)
 function getAllMovies(callback) {
     const query = 'SELECT film_id, title, description, release_year FROM film LIMIT 10000';
@@ -72,10 +75,66 @@ function deleteMovie(id, callback) {
     });
 }
 
+// Registreert een nieuwe gebruiker (in dit geval, een customer)
+const registerUser = (first_name, last_name, email, password, callback) => {
+  bcrypt.hash(password, saltRounds, (err, hash) => {
+    if (err) {
+      return callback(err);
+    }
+    const sql = "INSERT INTO customer (first_name, last_name, email, password, store_id, active, create_date, address_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    // Let op: je moet store_id, active, create_date en address_id een waarde geven
+    // Hier gebruiken we hardcoded waardes, maar je kunt dit aanpassen
+    const store_id = 1;
+    const active = 1;
+    const create_date = new Date();
+    const address_id = 1; // Je moet een bestaande address_id gebruiken
+
+    pool.query(sql, [first_name, last_name, email, hash, store_id, active, create_date, address_id], (dbErr, result) => {
+      if (dbErr) {
+        if (dbErr.code === "ER_DUP_ENTRY") {
+            logger.debug(`Attempt to register with existing email: ${email}`);
+          return callback(new Error("Email already registered."));
+        }
+            logger.error("Database error during user registration:", dbErr);
+        return callback(dbErr);
+      }
+      logger.debug(`New user registered with email: ${email}`);
+      callback(null, result);
+    });
+  });
+};
+
+// Logt een gebruiker in met de customer-tabel
+const loginUser = (email, password, callback) => {
+  const sql = "SELECT * FROM customer WHERE email = ?";
+  pool.query(sql, [email], (err, results) => {
+    if (err) {
+      return callback(err);
+    }
+    if (results.length === 0) {
+      return callback(new Error("Invalid email or password."));
+    }
+
+    const user = results[0];
+    bcrypt.compare(password, user.password, (bcryptErr, result) => {
+      if (bcryptErr) {
+        return callback(bcryptErr);
+      }
+      if (result) {
+        callback(null, user);
+      } else {
+        callback(new Error("Invalid email or password."));
+      }
+    });
+  });
+};
+
 module.exports = {
     getAllMovies,
     getMovieById,
     addMovie,
     updateMovie,
-    deleteMovie
+    deleteMovie,
+    registerUser,
+    loginUser
 };
