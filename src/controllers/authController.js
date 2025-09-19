@@ -12,7 +12,7 @@ exports.ShowRegisterPage = (req, res) => {
 
 // Verwerkt de registratie van een gebruiker
 exports.RegisterUser = (req, res) => {
-  const { email, password } = req.body;
+  const { first_name, last_name, email, password } = req.body;
   
   DAOService.registerUser(first_name, last_name, email, password, (err, result) => {
     if (err) {
@@ -31,9 +31,22 @@ exports.LoginUser = (req, res) => {
 
   DAOService.loginUser(email, password, (err, user) => {
     if (err) {
-      return res.status(401).send(err.message);
+      console.error("Login failed:", err.message);
+      return res.status(401).send("Invalid e-mailaddress or password.");
     }
-    // TODO: Implementeer hier de sessie- of tokenlogica
-    res.send("Login successful!");
+    req.session.user = user; // Sla de gebruiker op in de sessie
+    console.log("User successfully logged in. Redirecting...");
+    console.log(req.session.user);
+    res.status(200);
+
+    req.session.save((saveErr) => {
+            if (saveErr) {
+                console.error("Fout bij het opslaan van de sessie:", saveErr);
+                return res.status(500).send("Login mislukt.");
+            }
+            console.log("Sessiedata succesvol opgeslagen.");
+        });
+        
+    res.redirect('/movies'); // Stuur de gebruiker door naar de beveiligde pagina
   });
 };

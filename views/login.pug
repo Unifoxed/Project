@@ -10,15 +10,15 @@ block content
     }
 
   main.custom-form-width.m-auto
-    form
+    form(method="POST", action="/auth/login")
       img.mb-4(src="../images/profile-logo.gif", alt="", width="170", height="100")
       h1.h3.mb-3.fw-normal Please sign in
       
         .mb-3.my-3
-            input.form-control#floatingEmail(type="email", placeholder="Email address")
+            input.form-control#floatingEmail(type="email", name="email", placeholder="Email address")
       
         .mb-3
-            input.form-control.form-control-custom-sm#floatingPassword(type="password", placeholder="Password")
+            input.form-control.form-control-custom-sm#floatingPassword(type="password", name="password", placeholder="Password")
       
       .form-check.text-start.my-3
         input.form-check-input#checkDefault(type="checkbox", value="remember-me")

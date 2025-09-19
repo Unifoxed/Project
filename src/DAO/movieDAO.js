@@ -79,6 +79,7 @@ function deleteMovie(id, callback) {
 const registerUser = (first_name, last_name, email, password, callback) => {
   bcrypt.hash(password, saltRounds, (err, hash) => {
     if (err) {
+      logger.error("Bcrypt hashing error:", err);
       return callback(err);
     }
     const sql = "INSERT INTO customer (first_name, last_name, email, password, store_id, active, create_date, address_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -106,6 +107,7 @@ const registerUser = (first_name, last_name, email, password, callback) => {
 
 // Logt een gebruiker in met de customer-tabel
 const loginUser = (email, password, callback) => {
+  logger.debug(`Login attempt for email: ${email}`);
   const sql = "SELECT * FROM customer WHERE email = ?";
   pool.query(sql, [email], (err, results) => {
     if (err) {
