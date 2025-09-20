@@ -25,6 +25,18 @@ block content
             .card-footer.text-center
               button.btn.btn-primary(type="button", data-bs-toggle="modal", data-bs-target=`#movieModal-${movie.film_id}`)
                 View Details
+              
+              // NEW CODE: The favorite button is added here
+              if user
+                button.btn.favorite-btn(
+                  class=movie.isFavorite ? 'btn-danger' : 'btn-success',
+                  data-movie-id=movie.film_id,
+                  data-is-favorite=movie.isFavorite
+                )
+                  if movie.isFavorite
+                    | Remove from Favorites
+                  else
+                    | Add to Favorites
                 
             // Modal per film
             .modal.fade(id=`movieModal-${movie.film_id}`, tabindex="-1")
@@ -43,9 +55,11 @@ block content
                   .modal-footer
                     button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
 
-  //- Dit is het enige JavaScript-blok dat je nodig hebt.
+
+  block scripts
   script.
     document.addEventListener('DOMContentLoaded', () => {
+      // Existing search/filter logic
       const searchInput = document.getElementById('movieSearch');
       const limitSelect = document.getElementById('movieLimit');
       const cardCols = document.querySelectorAll('.col');
@@ -72,6 +86,34 @@ block content
       searchInput.addEventListener('input', filterMovies);
       limitSelect.addEventListener('change', filterMovies);
       
-      // Roep de functie aan bij het laden van de pagina om de initiële weergave te bepalen
       filterMovies();
+
+      // NEW CODE: JavaScript for the favorite buttons
+      const favoriteButtons = document.querySelectorAll('.favorite-btn');
+      favoriteButtons.forEach(button => {
+        button.addEventListener('click', async (e) => {
+          const movieId = e.target.dataset.movieId;
+          const isFavorite = e.target.dataset.isFavorite === 'true';
+
+          const url = `/movies/favorite/${movieId}`;
+          const method = isFavorite ? 'DELETE' : 'POST';
+
+          try {
+            const response = await fetch(url, { method });
+            if (response.ok) {
+              const newIsFavorite = !isFavorite;
+              e.target.dataset.isFavorite = newIsFavorite;
+              e.target.textContent = newIsFavorite ? 'Remove from Favorites' : 'Add to Favorites';
+              e.target.classList.toggle('btn-success', !newIsFavorite);
+              e.target.classList.toggle('btn-danger', newIsFavorite);
+            } else {
+              alert('An error occurred. Please try again.');
+            }
+          } catch (error) {
+            console.error('Fetch error:', error);
+            alert('An unexpected error occurred: ' + error.message);
+          }
+        });
+      });
     });
+    

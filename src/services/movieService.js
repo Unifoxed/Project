@@ -51,11 +51,31 @@ function deleteMovie(id, callback) {
     });
 }
 
+// Functie om favoriete films op te halen op basis van gebruikers-ID
+function getFavoriteMovieIds(userId, callback) {
+    movieDAO.getFavorites(userId, (err, favoriteIds) => {
+        if (err) return callback(err);
+        callback(null, favoriteIds);
+    });
+}
+
+// Functie om een film toe te voegen aan favorieten
+function addFavorite(userId, movieId, callback) {
+    movieDAO.addFavorite(userId, movieId, callback);
+}
+
+// Functie om een film uit favorieten te verwijderen
+function removeFavorite(userId, movieId, callback) {
+    movieDAO.removeFavorite(userId, movieId, callback);
+}
 // Exporteer de CRUD-methoden
 module.exports = {
     getMovies,
     getMovieById,
     addMovie,
     updateMovie,
-    deleteMovie
+    deleteMovie,
+    getFavoriteMovieIds,
+    addFavorite,
+    removeFavorite
 };

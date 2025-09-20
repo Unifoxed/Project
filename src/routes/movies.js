@@ -8,6 +8,10 @@ router.get("/", movieController.GetAllMovies);
 // Route voor het toevoegen van een nieuwe film
 router.post("/", movieController.AddNewMovie);
 
+// Routes for favorites (add/remove)
+router.post('/favorite/:id', movieController.AddFavoriteMovie);
+router.delete('/favorite/:id', movieController.RemoveFavoriteMovie);
+
 // Route voor het ophalen van een specifieke film op basis van ID
 router.get("/:id", movieController.GetMovieById);
 

@@ -82,21 +82,31 @@ const registerUser = (first_name, last_name, email, password, callback) => {
       logger.error("Bcrypt hashing error:", err);
       return callback(err);
     }
+    
     const sql = "INSERT INTO customer (first_name, last_name, email, password, store_id, active, create_date, address_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-    // Let op: je moet store_id, active, create_date en address_id een waarde geven
-    // Hier gebruiken we hardcoded waardes, maar je kunt dit aanpassen
+
     const store_id = 1;
     const active = 1;
     const create_date = new Date();
-    const address_id = 1; // Je moet een bestaande address_id gebruiken
+    const address_id = 1; // Assuming a default address_id
 
     pool.query(sql, [first_name, last_name, email, hash, store_id, active, create_date, address_id], (dbErr, result) => {
       if (dbErr) {
+        // Log detailed SQL error info to help debug malformed queries
+        try {
+          logger.error('Database error during user registration:', dbErr.code, dbErr.sqlMessage || dbErr.message);
+          if (dbErr.sql) {
+            logger.error('Failed SQL:', dbErr.sql);
+          }
+        } catch (logErr) {
+          logger.error('Error while logging DB error:', logErr);
+        }
+
         if (dbErr.code === "ER_DUP_ENTRY") {
-            logger.debug(`Attempt to register with existing email: ${email}`);
+          logger.debug(`Attempt to register with existing email: ${email}`);
           return callback(new Error("Email already registered."));
         }
-            logger.error("Database error during user registration:", dbErr);
+
         return callback(dbErr);
       }
       logger.debug(`New user registered with email: ${email}`);
@@ -104,6 +114,7 @@ const registerUser = (first_name, last_name, email, password, callback) => {
     });
   });
 };
+
 
 // Logt een gebruiker in met de customer-tabel
 const loginUser = (email, password, callback) => {
@@ -131,6 +142,43 @@ const loginUser = (email, password, callback) => {
   });
 };
 
+// Voegt een film toe aan de favorieten van een gebruiker
+function addFavorite(userId, movieId, callback) {
+  const query = 'INSERT INTO favorite_movies (customer_id, film_id) VALUES (?, ?)';
+  // Log the params for debugging
+  logger.debug('addFavorite SQL params:', { userId, movieId });
+  pool.query(query, [userId, movieId], (error, results) => {
+    if (error) {
+      try { logger.error('addFavorite DB error:', error.code, error.sqlMessage || error.message); } catch(e){}
+      return callback(error);
+    }
+    callback(null, results);
+  });
+}
+
+// Verwijder een film uit de favorieten van een gebruiker
+function removeFavorite(userId, movieId, callback) {
+  const query = 'DELETE FROM favorite_movies WHERE customer_id = ? AND film_id = ?';
+  logger.debug('removeFavorite SQL params:', { userId, movieId });
+  pool.query(query, [userId, movieId], (error, results) => {
+    if (error) {
+      try { logger.error('removeFavorite DB error:', error.code, error.sqlMessage || error.message); } catch(e){}
+      return callback(error);
+    }
+    callback(null, results);
+  });
+}
+
+// Haal alle favoriete films van een gebruiker op
+function getFavorites(userId, callback) {
+    const query = 'SELECT film_id FROM favorite_movies WHERE customer_id = ?';
+    pool.query(query, [userId], (error, results) => {
+        if (error) return callback(error);
+        callback(null, results.map(row => row.film_id));
+    });
+}
+
+
 module.exports = {
     getAllMovies,
     getMovieById,
@@ -138,5 +186,8 @@ module.exports = {
     updateMovie,
     deleteMovie,
     registerUser,
-    loginUser
+    loginUser,
+    addFavorite,
+    removeFavorite,
+    getFavorites
 };
