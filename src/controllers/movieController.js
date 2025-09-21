@@ -97,6 +97,21 @@ const DeleteMovieById = function(req, res, next) {
     });
 };
 
+// Functie om de persoonlijke watchlist van de gebruiker te tonen
+const GetWatchlist = function(req, res, next) {
+    // Haal de customer_id van de ingelogde gebruiker op
+    const userId = req.session.user ? req.session.user.customer_id : null;
+
+    if (!userId) {
+        return res.status(401).send("Gebruiker niet ingelogd.");
+    }
+
+    movieService.getFavoritesWithDetails(userId, (err, movies) => {
+        if (err) return next(err);
+        res.render("watchlist", { movies, user: req.session.user });
+    });
+};
+
 // Exporteer alle functies
 module.exports = {
     GetAllMovies,
@@ -117,5 +132,6 @@ module.exports = {
     UpdateMovieById,
     DeleteMovieById,
     AddFavoriteMovie,
-    RemoveFavoriteMovie
+    RemoveFavoriteMovie,
+    GetWatchlist
 };

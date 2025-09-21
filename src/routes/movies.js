@@ -1,7 +1,9 @@
-var express = require("express");
-var router = express.Router();
-const movieController = require("../controllers/movieController");
+const express = require('express');
+const router = express.Router();
+const movieController = require('../controllers/movieController');
 
+
+router.get('/watchlist', movieController.GetWatchlist);
 // Route voor alle films
 router.get("/", movieController.GetAllMovies);
 
@@ -20,5 +22,6 @@ router.put("/:id", movieController.UpdateMovieById);
 
 // Route voor het verwijderen van een specifieke film op basis van ID
 router.delete("/:id", movieController.DeleteMovieById);
+
 
 module.exports = router;
