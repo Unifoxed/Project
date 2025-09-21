@@ -7,8 +7,6 @@ router.get('/watchlist', movieController.GetWatchlist);
 // Route voor alle films
 router.get("/", movieController.GetAllMovies);
 
-// Route voor het toevoegen van een nieuwe film
-router.post("/", movieController.AddNewMovie);
 
 // Routes for favorites (add/remove)
 router.post('/favorite/:id', movieController.AddFavoriteMovie);

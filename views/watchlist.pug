@@ -2,19 +2,46 @@ extends layout
 
 block content
   .container.my-5
-    .row
-      .col-12
-        h1 Mijn Watchlist
-        p Dit is een lijst van alle beschikbare films.
-
-    .row.row-cols-1.row-cols-md-3.g-4
+    h1 My Watchlist
+  .container
+    .row.row-cols-1.row-cols-sm-2.row-cols-md-3.row-cols-lg-4.g-4
       each movie in movies
         .col
           .card.h-100
             img.card-img-top(src="/images/Bombardiro_Crocodillo.jpg", alt=movie.title)
             .card-body
               h5.card-title= movie.title
-              p.card-text= movie.description
-            .card-footer
-              // Je kunt hier knoppen toevoegen, bijvoorbeeld om naar de details te gaan
-              button.btn.btn-primary View Details
+            .card-footer.text-center
+              button.btn.btn-primary(type="button", data-bs-toggle="modal", data-bs-target=`#movieModal-${movie.film_id}`)
+                View Details
+              // De favorietenknop op de watchlist is altijd 'Remove'
+              button.btn.favorite-btn.btn-danger(data-movie-id=movie.film_id, data-is-favorite='true')
+                | Remove from Favorites
+          include partials/_movie_modals.pug
+
+  block scripts
+    script.
+      document.addEventListener('DOMContentLoaded', () => {
+        // De logica voor de favorietenknop op de watchlist-pagina
+        const favoriteButtons = document.querySelectorAll('.favorite-btn');
+        favoriteButtons.forEach(button => {
+          button.addEventListener('click', async (e) => {
+            const movieId = e.target.dataset.movieId;
+            const url = `/movies/favorite/${movieId}`;
+            const method = 'DELETE'; // De methode is altijd DELETE
+  
+            try {
+              const response = await fetch(url, { method });
+              if (response.ok) {
+                // Verwijder de filmkaart uit de DOM na succesvolle verwijdering
+                e.target.closest('.col').remove();
+              } else {
+                alert('An error occurred. Please try again.');
+              }
+            } catch (error) {
+              console.error('Fetch error:', error);
+              alert('An unexpected error occurred: ' + error.message);
+            }
+          });
+        });
+      });

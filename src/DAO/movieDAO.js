@@ -178,9 +178,22 @@ function getFavorites(userId, callback) {
     });
 }
 
+// Haal meerdere films op op basis van een array met IDs
+function getMoviesByIds(ids, callback) {
+  if (!Array.isArray(ids) || ids.length === 0) return callback(null, []);
+  // Build placeholders for the IN clause
+  const placeholders = ids.map(() => '?').join(',');
+  const query = `SELECT film_id, title, description, release_year FROM film WHERE film_id IN (${placeholders})`;
+  pool.query(query, ids, (error, results) => {
+    if (error) return callback(error);
+    callback(null, results);
+  });
+}
+
 
 module.exports = {
     getAllMovies,
+    getMoviesByIds,
     getMovieById,
     addMovie,
     updateMovie,

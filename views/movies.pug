@@ -38,22 +38,7 @@ block content
                   else
                     | Add to Favorites
                 
-            // Modal per film
-            .modal.fade(id=`movieModal-${movie.film_id}`, tabindex="-1")
-              .modal-dialog
-                .modal-content.text-bg-dark.text-white
-                  .modal-header
-                    h5.modal-title= movie.title
-                    button.btn-close(type="button", data-bs-dismiss="modal", aria-label="Close")
-                  .modal-body.text-start
-                    if movie.release_year
-                      p Released: #{movie.release_year}
-                    if movie.description
-                      p= movie.description
-                    else
-                      p No description available.
-                  .modal-footer
-                    button.btn.btn-secondary(type="button", data-bs-dismiss="modal") Close
+            include partials/_movie_modals.pug
 
 
   block scripts

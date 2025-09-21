@@ -59,6 +59,20 @@ function getFavoriteMovieIds(userId, callback) {
     });
 }
 
+// Functie om de volledige movie objects van de watchlist te halen
+function getWatchlist(userId, callback) {
+    // Eerst de favoriete film ids ophalen
+    movieDAO.getFavorites(userId, (err, favoriteIds) => {
+        if (err) return callback(err);
+        if (!favoriteIds || favoriteIds.length === 0) return callback(null, []);
+        // Haal de volledige movie records op
+        movieDAO.getMoviesByIds(favoriteIds, (movieErr, movies) => {
+            if (movieErr) return callback(movieErr);
+            callback(null, movies);
+        });
+    });
+}
+
 // Functie om een film toe te voegen aan favorieten
 function addFavorite(userId, movieId, callback) {
     movieDAO.addFavorite(userId, movieId, callback);
@@ -76,6 +90,7 @@ module.exports = {
     updateMovie,
     deleteMovie,
     getFavoriteMovieIds,
+    getWatchlist,
     addFavorite,
     removeFavorite
 };

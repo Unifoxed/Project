@@ -3,6 +3,13 @@ const movieService = require("../services/movieService");
 const logger = require("../util/logger");
 
 const GetAllMovies = function(req, res, next) {
+    // Diagnostic: log available functions on movieService to debug missing exports
+    try {
+        logger.debug('movieService exports:', Object.keys(movieService));
+        logger.debug('has getFavoriteMovieIds?', typeof movieService.getFavoriteMovieIds === 'function');
+    } catch (e) {
+        logger.error('Error while logging movieService keys:', e && e.message);
+    }
     // Haal de customer_id van de ingelogde gebruiker op
     const userId = req.session.user ? req.session.user.customer_id : null;
 
@@ -10,18 +17,31 @@ const GetAllMovies = function(req, res, next) {
         if (err) return next(err);
 
         if (userId) {
-            movieService.getFavoriteMovieIds(userId, (favErr, favoriteIds) => {
-                if (favErr) return next(favErr);
-                
-                const moviesWithFavorites = movies.map(movie => {
-                    return {
+            // Defensive: sometimes movieService may not expose getFavoriteMovieIds (module load issue).
+            if (typeof movieService.getFavoriteMovieIds === 'function') {
+                movieService.getFavoriteMovieIds(userId, (favErr, favoriteIds) => {
+                    if (favErr) return next(favErr);
+
+                    const moviesWithFavorites = movies.map(movie => ({
                         ...movie,
                         isFavorite: favoriteIds.includes(movie.film_id)
-                    };
+                    }));
+
+                    res.render("movies", { movies: moviesWithFavorites, user: req.session.user });
                 });
-                
-                res.render("movies", { movies: moviesWithFavorites, user: req.session.user });
-            });
+            } else {
+                // Fallback: call DAO directly and log for debugging
+                logger.error('movieService.getFavoriteMovieIds is not available, falling back to DAO.getFavorites');
+                const movieDAO = require('../DAO/movieDAO');
+                movieDAO.getFavorites(userId, (favErr, favoriteIds) => {
+                    if (favErr) return next(favErr);
+                    const moviesWithFavorites = movies.map(movie => ({
+                        ...movie,
+                        isFavorite: favoriteIds.includes(movie.film_id)
+                    }));
+                    res.render("movies", { movies: moviesWithFavorites, user: req.session.user });
+                });
+            }
         } else {
             res.render("movies", { movies, user: null });
         }
@@ -106,28 +126,19 @@ const GetWatchlist = function(req, res, next) {
         return res.status(401).send("Gebruiker niet ingelogd.");
     }
 
-    movieService.getFavoritesWithDetails(userId, (err, movies) => {
+    movieService.getFavoriteMovieIds(userId, (err, movies) => {
         if (err) return next(err);
-        res.render("watchlist", { movies, user: req.session.user });
+        // movies previously were IDs; use service to fetch full movie objects
+        movieService.getWatchlist(userId, (wlErr, fullMovies) => {
+            if (wlErr) return next(wlErr);
+            res.render("watchlist", { movies: fullMovies, user: req.session.user });
+        });
     });
 };
 
 // Exporteer alle functies
 module.exports = {
     GetAllMovies,
-    AddNewMovie: (req, res, next) => {
-        const { title, releaseYear, description } = req.body;
-        if (!title || !releaseYear || !description) {
-            return res.status(400).json({ error: "Alle velden zijn verplicht." });
-        }
-        movieService.addMovie({ title, release_year: releaseYear, description }, (err, result) => {
-            if (err) {
-                console.error("Fout bij toevoegen van film:", err);
-                return next(err);
-            }
-            res.status(201).json({ message: "Film toegevoegd!", movie: result });
-        });
-    },
     GetMovieById,
     UpdateMovieById,
     DeleteMovieById,
