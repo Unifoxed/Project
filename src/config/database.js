@@ -1,4 +1,5 @@
 const mysql = require('mysql2');
+require('dotenv').config();
 
 // Maak een connection pool aan. Een pool is efficiënter dan een losse connectie
 // omdat het verbindingen hergebruikt.
